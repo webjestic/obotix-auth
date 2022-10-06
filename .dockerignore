@@ -1,0 +1,11 @@
+node_modules/
+logs/
+.vscode/
+.do/
+.git/
+.gitignore
+.gitattributes
+.github
+.editorconfig
+.eslintignore
+.eslintrc.json
