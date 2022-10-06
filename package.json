@@ -1,0 +1,35 @@
+{
+  "name": "obotix-scaffold",
+  "version": "0.1.0",
+  "description": "obotix-auth server",
+  "main": "src/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=16.15.1",
+    "npm": ">=8.19.2"
+  },
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "test": "vitest --run",
+    "coverage": "vitest run --coverage",
+    "lint": "eslint . --cache "
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webjestic/obotix-auth.git"
+  },
+  "author": "Michael N (webjestic)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webjestic/obotix-auth/issues"
+  },
+  "homepage": "https://github.com/webjestic/obotix-auth#readme",
+  "devDependencies": {
+    "eslint": "^8.24.0",
+    "vitest": "^0.23.4"
+  },
+  "dependencies": {
+    "obotix": "^0.2.1"
+  }
+}
