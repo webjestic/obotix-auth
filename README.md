@@ -1,6 +1,5 @@
 # obotix-auth
 
-
 ---
 ## Docker
 ```bash
