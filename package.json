@@ -30,6 +30,9 @@
     "vitest": "^0.23.4"
   },
   "dependencies": {
+    "fnlib": "^0.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.5",
     "obotix": "^0.2.3"
   }
 }
