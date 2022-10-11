@@ -29,7 +29,7 @@ function routeGetToken(req, res) {
         status: 200,
         message: '',
         data: {
-            token: fnlib.randomHex(512)
+            token: fnlib.randomHex(obotix.getConfig().auth.tokenSize)
         }
     }
 }

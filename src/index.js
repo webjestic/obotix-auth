@@ -3,7 +3,7 @@ import obotix from 'obotix'
 import auth from './auth.js'
 
 await obotix.init()
-const log = obotix.getLogger('app:index')
+const log = obotix.getLogger('auth:index')
 obotix.setLogLevel('trace')
 
 const router = await auth.Router()
