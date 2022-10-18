@@ -1,6 +1,6 @@
 {
-  "name": "obotix-scaffold",
-  "version": "0.1.0",
+  "name": "obotix-auth",
+  "version": "0.1.1",
   "description": "obotix-auth server",
   "main": "src/index.js",
   "type": "module",
@@ -25,11 +25,14 @@
     "url": "https://github.com/webjestic/obotix-auth/issues"
   },
   "homepage": "https://github.com/webjestic/obotix-auth#readme",
+  "dependencies": {
+    "fnlib": "^0.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.6.5",
+    "obotix": "^0.2.7"
+  },
   "devDependencies": {
     "eslint": "^8.24.0",
     "vitest": "^0.23.4"
-  },
-  "dependencies": {
-    "obotix": "^0.2.1"
   }
 }

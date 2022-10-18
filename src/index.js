@@ -1,10 +1,14 @@
 
 import obotix from 'obotix'
+import auth from './auth.js'
 
 await obotix.init()
-const log = obotix.logger.getLogger('app:index')
-obotix.logger.setLogLevel('trace')
+const log = obotix.getLogger('auth:index')
+obotix.setLogLevel('trace')
+
+const router = await auth.Router()
+obotix.addRouter( router )
 
 obotix.listen( () => {
-    log.info(`Service Listening on ${process.env.OBOTIX_PORT}`)
+    log.info(`Service Listening on ${process.env.OAPI_PORT}`)
 })
