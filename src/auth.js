@@ -3,6 +3,7 @@
 import obotix from 'obotix'
 import generateRoute from './routes/generate_route.js'
 import config from './models/config_model.js'
+import user from './models/user_model.js'
 
 var log = undefined
 var router = undefined
@@ -10,8 +11,9 @@ var router = undefined
 
 async function setup() {
     log = obotix.logger.getLogger('auth:auth')
-    await config.initModel()
+    config.initModel()
     await config.loadData()
+    user.initModel()
 }
 
 function setupRouter() {

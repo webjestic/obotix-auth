@@ -15,6 +15,11 @@
 503 Service Unavailable - In maintenance mode or overloaded
 ```
 
+/auth/generate/key
+/auth/generate/token
+/auth/generate/user/key
+/auth/generate/user/token
+
 ---
 ## Docker
 ```bash

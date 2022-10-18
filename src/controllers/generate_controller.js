@@ -11,7 +11,7 @@ function init() {
 
 
 // eslint-disable-next-line no-unused-vars
-function routeGetKey(req, res) {
+function getKey(req, res) {
     init()
     return {
         status: 200,
@@ -23,12 +23,13 @@ function routeGetKey(req, res) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function routeGetToken(req, res) {
+function getToken(req, res) {
     init()
     return {
         status: 200,
         message: '',
         data: {
+            size: obotix.getConfig().auth.tokenSize,
             token: fnlib.randomHex(obotix.getConfig().auth.tokenSize)
         }
     }
@@ -46,12 +47,12 @@ function checkRequiredUserFields(req) {
 }
 
 
-function routePostUserKey(req, res) {
+function postUserKey(req, res) {
     var response = {}
-    if (checkRequiredUserFields().message !== '') 
+    if (checkRequiredUserFields(req).message !== '') 
         response.status = 400
     else {
-        response = routeGetKey(req, res)
+        response = getKey(req, res)
         if (response.status === 200) {
             response.data.username = req.body.username
             response.data.email = req.body.email
@@ -61,12 +62,12 @@ function routePostUserKey(req, res) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function routePostUserToken(req, res) {
+function postUserToken(req, res) {
     var response = {}
-    if (checkRequiredUserFields().message !== '') 
+    if (checkRequiredUserFields(req).message !== '') 
         response.status = 400
     else {
-        response = routeGetToken(req, res)
+        response = getToken(req, res)
 
         if (response.status === 200) {
             response.data.username = req.body.username
@@ -77,9 +78,9 @@ function routePostUserToken(req, res) {
 }
 
 export default {
-    routeGetKey,
-    routeGetToken,
-    routePostUserKey,
-    routePostUserToken
+    getKey,
+    getToken,
+    postUserKey,
+    postUserToken
 }
 

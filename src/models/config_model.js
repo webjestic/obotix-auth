@@ -32,7 +32,7 @@ function configChange(change) {
 async function loadData() {
     const doc = await Config.findOne({ 'CONFIG_APP': process.env.OAPI_CONFIG_APP }).exec() 
     obotix.setConfig(doc)
-    log.info(`${obotix.getConfig().CONFIG_APP} config loaded.`)
+    log.info(`${obotix.getConfig().CONFIG_APP} config model loaded.`)
 }
 
 export default {
