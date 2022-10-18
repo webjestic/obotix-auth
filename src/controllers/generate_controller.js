@@ -12,11 +12,11 @@ function init() {
 
 // eslint-disable-next-line no-unused-vars
 function getKey(req, res) {
-    init()
     return {
         status: 200,
         message: '',
         data: {
+            type: 'v4',
             key: fnlib.randomUUID()
         }
     }
@@ -24,13 +24,15 @@ function getKey(req, res) {
 
 // eslint-disable-next-line no-unused-vars
 function getToken(req, res) {
-    init()
+    let tokenSize = 512
+    if (obotix.config !== undefined && obotix.getConfig().auth.tokenSize !== undefined)
+        tokenSize = obotix.getConfig().auth.tokenSize
     return {
         status: 200,
         message: '',
         data: {
-            size: obotix.getConfig().auth.tokenSize,
-            token: fnlib.randomHex(obotix.getConfig().auth.tokenSize)
+            size: tokenSize,
+            token: fnlib.randomHex(tokenSize)
         }
     }
 }
@@ -78,6 +80,7 @@ function postUserToken(req, res) {
 }
 
 export default {
+    init,
     getKey,
     getToken,
     postUserKey,

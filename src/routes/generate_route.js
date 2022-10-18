@@ -7,6 +7,7 @@ var log = undefined
 // {endpoint}/auth/generate
 export default function (router) {
     if (log === undefined) log = obotix.getLogger('route:genToken')
+    controller.init()
 
     router.get('/key', (req, res) => {
         const response = controller.getKey(req, res)
