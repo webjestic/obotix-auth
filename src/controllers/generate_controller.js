@@ -25,8 +25,10 @@ function getKey(req, res) {
 // eslint-disable-next-line no-unused-vars
 function getToken(req, res) {
     let tokenSize = 512
-    if (obotix.config !== undefined && obotix.getConfig().auth.tokenSize !== undefined)
-        tokenSize = obotix.getConfig().auth.tokenSize
+    if (obotix.getConfig() !== undefined) {
+        if (obotix.getConfig().auth !== undefined)
+            tokenSize = obotix.getConfig().auth.tokenSize
+    }
     return {
         status: 200,
         message: '',

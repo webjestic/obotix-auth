@@ -20,8 +20,8 @@ async function setup() {
 function setupRouter() {
     router.use('/auth/generate', generateRoute(router))
     router.use('/auth/user', userRoute(router))
-    // router.use('/generate/base64')
-    // router.use('/generate/hex')
+    // router.use('/auth/google')
+    // router.use('/auth/twitter')
 }
 
 async function Router() {

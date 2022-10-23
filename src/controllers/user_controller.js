@@ -4,6 +4,7 @@ import obotix from 'obotix'
 import model from '../models/user_model.js'
 import Joi from 'joi'
 import fnlib from 'fnlib'
+import bcrypt from 'bcrypt'
 
 var log = undefined
 
@@ -11,12 +12,8 @@ function init() {
     if (log === undefined) log = obotix.getLogger('auth:userCtl')
 }
 
-async function validateBody(body) {
+async function validateRegisterBody(body) {
     var value = {}
-
-    body.username = body.username.toLowerCase()
-    body.firstName = fnlib.capitalizeFirstLetter(body.firstName)
-    body.lastName = fnlib.capitalizeFirstLetter(body.lastName)
     
     const schema = Joi.object({
         username: Joi.string().alphanum().min(4).max(20).required(), // TODO: Force lowercase
@@ -32,12 +29,35 @@ async function validateBody(body) {
     try {
         log.debug('body:', body)
         value = await schema.validateAsync(body)
+        body.username = body.username.toLowerCase()
+        body.firstName = fnlib.capitalizeFirstLetter(body.firstName)
+        body.lastName = fnlib.capitalizeFirstLetter(body.lastName)
+
     } catch (err) { 
         log.debug('Catch:', err) 
         log.error('Invalid User Info:', err.message)
         value = `ERROR: ${err.message}`
     }
     
+    return value
+}
+
+async function validateLoginBody(body) {
+    var value = {}
+
+    const schema = Joi.object({
+        email: Joi.string().email(),
+        password: Joi.string().required().pattern(new RegExp('^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$'))
+    })
+
+    try {
+        log.debug('body:', body)
+        value = await schema.validateAsync(body)
+    } catch (err) { 
+        log.error('Invalid User Info:', err.message)
+        value = `ERROR: ${err.message}`
+    }
+
     return value
 }
 
@@ -53,28 +73,13 @@ function validatePasswords(body) {
     return body.password === body.passwordRepeat
 }
 
-// eslint-disable-next-line no-unused-vars
-function getProfile(req, res) {
-    let response = obotix.responseTemplate()
-    model.getUser(req.body)
-    return response
-}
 
-// eslint-disable-next-line no-unused-vars
-function updateProfile(req, res) {
-    let response = obotix.responseTemplate()
-    model.updateUser(req.body)
-    return response
-}
-
-// eslint-disable-next-line no-unused-vars
-function loginUser(req, res) {
-    let response = obotix.responseTemplate()
-    model.loginUser(req.body)
-    return response
-}
-
-// eslint-disable-next-line no-unused-vars
+/** REGISTER
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @returns response
+ */
 async function registerUser(req, res) {
     let response = obotix.responseTemplate()
     let passedValidation = true
@@ -82,11 +87,11 @@ async function registerUser(req, res) {
     // check the body - perhaps the caller didn't include a JSON body
     if (req.body.username === undefined) {
         response.status = 400
-        response.message = 'Invalid body content.'
+        response.message = 'Invalid body content. Missing field requirements.'
         return response
     }
 
-    const validInput = await validateBody(req.body)
+    const validInput = await validateRegisterBody(req.body)
     const validUsername = await validateUsername(req.body.username)
     const validEmail = await validateEmail(req.body.email)
     const validPasswords = validatePasswords(req.body)
@@ -129,8 +134,49 @@ async function registerUser(req, res) {
         }
     } 
 
-    if (response.status !== 200)
-        delete response.data
+    return response
+}
+
+
+/** LOGIN
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
+// eslint-disable-next-line no-unused-vars
+async function loginUser(req, res) {
+    let response = obotix.responseTemplate()
+    let passedValidation = true
+
+    const validInput = await validateLoginBody(req.body)
+
+    if (!validInput.email) {
+        response.status = 400
+        response.message = `Invalid body content.  ${validInput}`
+        passedValidation = false
+    } 
+
+    if (passedValidation) {
+        var userdoc = await model.findUserByEmail(req.body.email)
+        if (!userdoc) {
+            response.status = 400
+            response.message = 'Invalid email or password.'
+            passedValidation = false
+        }
+    }
+
+    if (passedValidation) {
+        const validPassword = await bcrypt.compare(req.body.password, userdoc.password)
+        if (!validPassword) {
+            response.status = 400
+            response.message = 'Invalid email or password.'
+            passedValidation = false
+        } else {
+            res.header('x-auth-token', userdoc.generateAuthToken())
+            response.data._id = userdoc._id
+        }
+    }
 
     return response
 }
@@ -139,6 +185,20 @@ async function registerUser(req, res) {
 function deleteUser(req, res) {
     let response = obotix.responseTemplate()
     model.deleteUser(req.body)
+    return response
+}
+
+// eslint-disable-next-line no-unused-vars
+function getProfile(req, res) {
+    let response = obotix.responseTemplate()
+    model.getUser(req.body)
+    return response
+}
+
+// eslint-disable-next-line no-unused-vars
+function updateProfile(req, res) {
+    let response = obotix.responseTemplate()
+    model.updateUser(req.body)
     return response
 }
 

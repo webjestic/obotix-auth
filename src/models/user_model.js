@@ -18,9 +18,6 @@ function initModel() {
         userSchema.methods.generateAuthToken = function() { 
             // JWT Sign: https://www.npmjs.com/package/jsonwebtoken
             const token = jwt.sign({ _id: this._id, email: this.email }, process.env.OAPI_JWT_KEY)
-            log.debug('_id:', this._id)
-            log.debug('role:', this.role)
-            log.debug('jwt:', token)
             return token
         }
         User = mongoose.model('User', userSchema)
@@ -32,12 +29,8 @@ function initModel() {
 // eslint-disable-next-line no-unused-vars
 async function createUser(body) {
     var result = ''
-    log.debug('data:',body)
     const salt = await bcrypt.genSalt(10)
-    log.debug('salt', salt)
     body.password = await bcrypt.hash(body.password, salt)
-    log.debug('hashed pw', body.password)
-    log.debug('data:',body)
     body.role = obotix.getConfig().roles.basic
     let user = new User(body)
     try {
@@ -51,17 +44,12 @@ async function createUser(body) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function findUserById(data) {
-
+async function findUserById(uid) {
+    return await User.findUserById(uid).exec()
 }
 
 async function findUserByEmail(email) {
     return await User.findOne({ 'email': email }).exec()
-}
-
-// eslint-disable-next-line no-unused-vars
-async function findUserByName(data) {
-    
 }
 
 async function findUserByUsername(username) {
@@ -93,7 +81,6 @@ export default {
     createUser,
     findUserById,
     findUserByEmail,
-    findUserByName,
     findUserByUsername,
     getUser,
     loginUser,

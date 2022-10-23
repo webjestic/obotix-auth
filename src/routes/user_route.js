@@ -25,7 +25,7 @@ export default function (router) {
     })
 
     router.post('/login', async (req, res) => {
-        const response = controller.loginUser(req, res)
+        const response = await controller.loginUser(req, res)
         res.status(response.status).json(response)
     })
 

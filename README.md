@@ -21,6 +21,9 @@
 /auth/generate/token
 /auth/generate/user/key
 /auth/generate/user/token
+/auth/user
+/auth/user/login
+/auth/user/register
 
 ---
 ## Docker
