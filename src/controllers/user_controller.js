@@ -12,8 +12,23 @@ function init() {
     if (log === undefined) log = obotix.getLogger('auth:userCtl')
 }
 
+async function validateInput(schema, body) {
+    let value = {}
+
+    try {
+        log.debug('body:', body)
+        value = await schema.validateAsync(body)
+    } catch (err) {
+        log.debug('Catch:', err) 
+        log.error('Invalid User Info:', err.message)
+        value.errorMsg = `ERROR: ${err.message}`
+        value.error = true
+    }
+
+    return value
+}
+
 async function validateRegisterBody(body) {
-    var value = {}
     
     const schema = Joi.object({
         username: Joi.string().alphanum().min(4).max(20).required(), // TODO: Force lowercase
@@ -26,39 +41,24 @@ async function validateRegisterBody(body) {
         phone: Joi.string().pattern(/^([+]?\d{1,2}[-\s]?|)\d{3}[-\s]?\d{3}[-\s]?\d{4}$/)
     })
 
-    try {
-        log.debug('body:', body)
-        value = await schema.validateAsync(body)
+    var value = {}
+    value = await validateInput(schema, body)
+    if (value.error === undefined) {
         body.username = body.username.toLowerCase()
         body.firstName = fnlib.capitalizeFirstLetter(body.firstName)
         body.lastName = fnlib.capitalizeFirstLetter(body.lastName)
-
-    } catch (err) { 
-        log.debug('Catch:', err) 
-        log.error('Invalid User Info:', err.message)
-        value = `ERROR: ${err.message}`
     }
     
     return value
 }
 
 async function validateLoginBody(body) {
-    var value = {}
-
     const schema = Joi.object({
         email: Joi.string().email(),
         password: Joi.string().required().pattern(new RegExp('^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,20}$'))
     })
 
-    try {
-        log.debug('body:', body)
-        value = await schema.validateAsync(body)
-    } catch (err) { 
-        log.error('Invalid User Info:', err.message)
-        value = `ERROR: ${err.message}`
-    }
-
-    return value
+    return await validateInput(schema, body)
 }
 
 async function validateUsername(username) {
@@ -149,6 +149,9 @@ async function loginUser(req, res) {
     let response = obotix.responseTemplate()
     let passedValidation = true
 
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress 
+    log.info('Login IP: ', ip)
+
     const validInput = await validateLoginBody(req.body)
 
     if (!validInput.email) {
@@ -175,6 +178,7 @@ async function loginUser(req, res) {
         } else {
             res.header('x-auth-token', userdoc.generateAuthToken())
             response.data._id = userdoc._id
+            response.data.role = userdoc.role
         }
     }
 
