@@ -2,6 +2,7 @@
 
 import obotix from 'obotix'
 import generateRoute from './routes/generate_route.js'
+import userRoute from './routes/user_route.js'
 import config from './models/config_model.js'
 import user from './models/user_model.js'
 
@@ -18,8 +19,9 @@ async function setup() {
 
 function setupRouter() {
     router.use('/auth/generate', generateRoute(router))
-    // router.use('/generate/base64')
-    // router.use('/generate/hex')
+    router.use('/auth/user', userRoute(router))
+    // router.use('/auth/google')
+    // router.use('/auth/twitter')
 }
 
 async function Router() {

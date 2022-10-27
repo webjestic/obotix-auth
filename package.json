@@ -26,10 +26,14 @@
   },
   "homepage": "https://github.com/webjestic/obotix-auth#readme",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "fnlib": "^0.1.4",
+    "joi": "^17.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.6.5",
-    "obotix": "^0.2.7"
+    "obotix": "^0.2.10",
+    "openid-client": "^5.2.0",
+    "passport": "^0.6.0"
   },
   "devDependencies": {
     "eslint": "^8.24.0",
